@@ -5,6 +5,7 @@ from financialcalc.ratios import DailySharpeRatio
 from godel import Godel
 from import_stock_data import get_data_yf_symbol, symbol_to_path
 import json
+from sentiment.analyzer import evaluate_sentiment
 
 def main():
     # Step 1: Define stock tickers and timeframe
@@ -51,8 +52,33 @@ def main():
             indent=4
         )
     print(f"Saved news articles at {news_file_path}.")
-
     print("Data retrieval and storage complete.")
+
+    # Step 5: Analyze Sentiment of Given Articles
+    with open('articles/test_aapl_article.txt', 'r', encoding='utf-8') as file:
+        file_content = file.read().strip()
+    test_string = file_content
+
+    # Evaluate Sentiment:
+    sentiment_score = evaluate_sentiment(test_string)
+    print(f"Example 1 Sentiment score: {sentiment_score}")
+
+    # Other examples:
+    # Example 2:
+    article_text = """
+    Apple's new product launch has been met with widespread acclaim. Experts believe it
+    will drive record-breaking sales, while customers praise its innovative features.
+    """
+    sentiment_score = evaluate_sentiment(article_text)
+    print(f"Example 2 Sentiment Score: {sentiment_score}")
+
+    # Example 3:
+    article_text = """
+    Boo Lame Apple sucks this is so bad for the market boo lame. 
+    """
+    sentiment_score = evaluate_sentiment(article_text)
+    print(f"Example 3 Sentiment Score: {sentiment_score}")
+
 
 if __name__ == "__main__":
     main()
