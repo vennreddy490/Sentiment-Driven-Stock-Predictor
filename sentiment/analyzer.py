@@ -7,9 +7,12 @@ from godel import Article
 # Ensure the VADER lexicon is downloaded (only needs to be done once)
 # IF YOU'RE DOWNLOADING THIS, MAKE SURE TO RUN IT AT LEAST ONCE!!!!
 nltk.data.path.append(os.path.join(os.path.dirname(__file__), "nltk_data"))
-nltk.download("vader_lexicon", download_dir=os.path.join(os.path.dirname(__file__), "nltk_data"))
+nltk.download(
+    "vader_lexicon", download_dir=os.path.join(os.path.dirname(__file__), "nltk_data")
+)
 
-def evaluate_sentiment(article_text: str) -> int:
+
+def evaluate_sentiment(article_text: str) -> float:
     """
     Evaluate the sentiment of a given article text on a scale of 1-10.
     Args:
@@ -29,8 +32,11 @@ def evaluate_sentiment(article_text: str) -> int:
 
     return compound_score
 
+
 # def create_sentiment_column(stock_df: pd.DataFrame, articles: list[Article]) -> pd.DataFrame:
-def create_sentiment_column(stock_df: pd.DataFrame, articles: list[Article]) -> pd.DataFrame:
+def create_sentiment_column(
+    stock_df: pd.DataFrame, articles: list[Article]
+) -> pd.DataFrame:
     """
     Evaluates the news for a stock ticker for a particular day, averages it, and appends the mean
     sentiment of that news to a new column called "Sentiment" for a stock ticker.
@@ -43,7 +49,7 @@ def create_sentiment_column(stock_df: pd.DataFrame, articles: list[Article]) -> 
 
     # Making sure date is in datetime format, and creating Sentiment column
     stock_df.index = pd.to_datetime(stock_df.index)
-    stock_df['Sentiment'] = 0.0
+    stock_df["Sentiment"] = 0.0
 
     for date in stock_df.index:
         matching_articles = []
@@ -68,7 +74,8 @@ def create_sentiment_column(stock_df: pd.DataFrame, articles: list[Article]) -> 
 
             # Default case sentiment is 0, otherwise we update the sentiment.
             avg_sentiment = 0.0
-            if sentiments: avg_sentiment = sum(sentiments) / len(sentiments)
-            stock_df.at[date, 'Sentiment'] = avg_sentiment
+            if sentiments:
+                avg_sentiment = sum(sentiments) / len(sentiments)
+            stock_df.at[date, "Sentiment"] = avg_sentiment
 
     return stock_df
