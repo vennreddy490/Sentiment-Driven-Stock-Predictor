@@ -1,6 +1,6 @@
 import os
 from builder.builder import Builder
-from learners import BagLearner, DTLearner, split_time_series
+from learners import BagLearner, DTLearner, RTLearner, split_time_series
 from json import loads
 from typing import cast
 from sklearn.preprocessing import LabelEncoder
@@ -16,6 +16,7 @@ if not os.path.exists("data/AAPL.csv"):
     aapl_data.to_csv("data/AAPL.csv")
 else:
     aapl_data = pd.read_csv("data/AAPL.csv")
+    aapl_data["Date"] = pd.to_datetime(aapl_data["Date"])
     aapl_data = aapl_data.set_index("Date")
 
 encoder = LabelEncoder()
@@ -39,7 +40,7 @@ print(train_x.head())
 print(f"Train Y Head")
 print(train_y.head())
 
-learner = BagLearner(DTLearner, 50, True)
+learner = BagLearner(RTLearner, 50, True)
 
 learner.add_evidence(train_x, train_y)
 

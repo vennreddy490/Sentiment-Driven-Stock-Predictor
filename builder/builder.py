@@ -35,11 +35,11 @@ class Builder:
             pd.DataFrame: The DataFrame representing the stock dataset.
         """
 
-        start_date = datetime.strptime(startDate, "%M-%d-%Y")
-        end_date = datetime.strptime(endDate, "%M-%d-%Y")
+        start_date = datetime.strptime(startDate, "%m-%d-%Y")
+        end_date = datetime.strptime(endDate, "%m-%d-%Y")
 
         stock_df = Stooq.download(
-            ticker, start_date.strftime("%Y%M%d"), end_date.strftime("%Y%M%d")
+            ticker, start_date.strftime("%Y%m%d"), end_date.strftime("%Y%m%d")
         )
 
         if len(stock_df) == 0:
@@ -66,7 +66,7 @@ class Builder:
         #             and added to DataFrame.
 
         articles_obj = Godel.queryNews(
-            [ticker], start_date.strftime("%M-%d-%Y"), end_date.strftime("%M-%d-%Y")
+            [ticker], start_date.strftime("%m-%d-%Y"), end_date.strftime("%m-%d-%Y")
         )
 
         articles_obj = articles_obj[ticker]

@@ -42,11 +42,11 @@ class Godel:
 
         """
         start = (
-            datetime.strptime(startDate, "%M-%d-%Y").strftime("%Y-%M-%dT%H:%M:%S.")
+            datetime.strptime(startDate, "%m-%d-%Y").strftime("%Y-%m-%dT%H:%m:%S.")
             + "000Z"
         )
         end = (
-            datetime.strptime(endDate, "%M-%d-%Y").strftime("%Y-%M-%dT%H:%M:%S.")
+            datetime.strptime(endDate, "%m-%d-%Y").strftime("%Y-%m-%dT%H:%m:%S.")
             + "000Z"
         )
         postBody = {
@@ -251,8 +251,8 @@ class Godel:
                         article["description"],
                     )
                     article_dt = datetime.strptime(
-                        parsed.publicationTime, "%Y-%M-%dT%H:%M:%SZ"
-                    ).strftime("%Y-%M-%d")
+                        parsed.publicationTime, "%Y-%m-%dT%H:%m:%SZ"
+                    ).strftime("%Y-%m-%d")
                     if article_dt not in news_object[security_ticker]:
                         news_object[security_ticker][article_dt] = []
                     news_object[security_ticker][article_dt].append(parsed)
