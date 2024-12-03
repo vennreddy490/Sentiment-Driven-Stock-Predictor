@@ -42,15 +42,15 @@ class Godel:
 
         """
         start = (
-            datetime.strptime(startDate, "%M-%d-%Y").strftime("%Y-%m-%dT%H:%M:%S.")
+            datetime.strptime(startDate, "%M-%d-%Y").strftime("%Y-%M-%dT%H:%M:%S.")
             + "000Z"
         )
         end = (
-            datetime.strptime(endDate, "%M-%d-%Y").strftime("%Y-%m-%dT%H:%M:%S.")
+            datetime.strptime(endDate, "%M-%d-%Y").strftime("%Y-%M-%dT%H:%M:%S.")
             + "000Z"
         )
         postBody = {
-            "size": 100,
+            "size": 10000000,
             "start": start,
             "end": end,
             "beforeCursor": None,
@@ -230,6 +230,8 @@ class Godel:
 
         news_object = {ticker: [] for ticker in tickers}
 
+        print(json.dumps(postBody))
+
         response = requests.post(
             "https://api.godelterminal.com/api/paged/news",
             json.dumps(postBody),
@@ -237,6 +239,8 @@ class Godel:
         )
 
         response_obj = response.json()["content"]
+
+        print(f"Successfully fetched {len(response_obj)} articles.")
 
         for article in response_obj:
 
