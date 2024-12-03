@@ -230,8 +230,6 @@ class Godel:
 
         news_object = {ticker: [] for ticker in tickers}
 
-        print(json.dumps(postBody))
-
         response = requests.post(
             "https://api.godelterminal.com/api/paged/news",
             json.dumps(postBody),
@@ -239,8 +237,6 @@ class Godel:
         )
 
         response_obj = response.json()["content"]
-
-        print(f"Successfully fetched {len(response_obj)} articles.")
 
         for article in response_obj:
 
