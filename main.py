@@ -6,6 +6,7 @@ from godel import Godel, Article, articleSerializer
 from import_stock_data import get_data_yf_symbol, symbol_to_path
 import json
 from sentiment.analyzer import evaluate_sentiment
+from stooq import Stooq
 
 
 def main():
@@ -14,30 +15,38 @@ def main():
     tickers_df = pd.read_csv(tickers_file)
     tickers = tickers_df["Symbol"].tolist()
 
+    stock_dataframes = {}
+
     start_date = "2024-01-01"  # Example: January 1, 2024
     end_date = "2024-11-28"  # Example: November 28, 2024
     threshold = 2.0  # Threshold for Buy/Sell signals (percentage)
+
+    for ticker in tickers:
+        stock_dataframes[ticker] = Stooq.download(
+            f"{ticker}.us", start_date.replace("-", ""), end_date.replace("-", "")
+        )
+        print(stock_dataframes[ticker].head())
 
     # Step 2: Ensure "data" directory exists
     data_dir = "data"
     os.makedirs(data_dir, exist_ok=True)
 
     # Step 3: Retrieve and process historical data
-    all_historical_data = {}
-    for ticker in tickers:
-        print(f"Downloading data for {ticker}...")
-        data = get_data_yf_symbol(ticker, start_date, end_date)
-        if not data.empty:
-            data.to_csv(symbol_to_path(ticker, base_dir=data_dir))
-            data = DailyReturn(data)
-            data = BuySellHold(data, threshold)
-            data = DailySharpeRatio(data)
-            all_historical_data[ticker] = data
-            file_path = os.path.join(data_dir, f"{ticker}.csv")
-            data.to_csv(file_path)
-            print(f"Saved historical data for {ticker} at {file_path}.")
-        else:
-            print(f"No data found for {ticker}.")
+    # all_historical_data = {}
+    # for ticker in tickers:
+    #     print(f"Downloading data for {ticker}...")
+    #     data = get_data_yf_symbol(ticker, start_date, end_date)
+    #     if not data.empty:
+    #         data.to_csv(symbol_to_path(ticker, base_dir=data_dir))
+    #         data = DailyReturn(data)
+    #         data = BuySellHold(data, threshold)
+    #         data = DailySharpeRatio(data)
+    #         all_historical_data[ticker] = data
+    #         file_path = os.path.join(data_dir, f"{ticker}.csv")
+    #         data.to_csv(file_path)
+    #         print(f"Saved historical data for {ticker} at {file_path}.")
+    #     else:
+    #         print(f"No data found for {ticker}.")
 
     # Step 4: Fetch and process news articles
     print("Fetching news articles...")
@@ -59,14 +68,14 @@ def main():
     print(f"Saved news articles at {news_file_path}.")
     print("Data retrieval and storage complete.")
 
-    # Step 5: Analyze Sentiment of Given Articles
-    with open("articles/test_aapl_article.txt", "r", encoding="utf-8") as file:
-        file_content = file.read().strip()
-    test_string = file_content
+    # # Step 5: Analyze Sentiment of Given Articles
+    # with open("articles/test_aapl_article.txt", "r", encoding="utf-8") as file:
+    #     file_content = file.read().strip()
+    # test_string = file_content
 
-    # Evaluate Sentiment:
-    sentiment_score = evaluate_sentiment(test_string)
-    print(f"Example 1 Sentiment score: {sentiment_score}")
+    # # Evaluate Sentiment:
+    # sentiment_score = evaluate_sentiment(test_string)
+    # print(f"Example 1 Sentiment score: {sentiment_score}")
 
     # Other examples:
     # Example 2:
