@@ -64,15 +64,18 @@ class Article:
         if self.xmlArticle != None:
             return self.xmlArticle
 
-        response = requests.get(
-            f"https://api.godelterminal.com/api/news/content/{self.key}"
-        )
+        try:
+            response = requests.get(
+                f"https://api.godelterminal.com/api/news/content/{self.key}"
+            )
 
-        if response.status_code != 200:
+            if response.status_code != 200:
+                return None
+
+            root = etree.fromstring(response.text)
+
+            self.xmlArticle = root
+            self.articleText = " ".join(root.xpath(".//nitf/body//text()")).strip()
+            return root
+        except:
             return None
-
-        root = etree.fromstring(response.text)
-
-        self.xmlArticle = root
-        self.articleText = " ".join(root.xpath(".//nitf/body//text()")).strip()
-        return root
