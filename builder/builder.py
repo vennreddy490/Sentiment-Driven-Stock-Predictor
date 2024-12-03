@@ -65,34 +65,43 @@ class Builder:
         # Checkpoint: Financial Statistics Calculated
         #             and added to DataFrame.
 
-        articles = Godel.queryNews(
+        articles_obj = Godel.queryNews(
             [ticker], start_date.strftime("%M-%d-%Y"), end_date.strftime("%M-%d-%Y")
         )
 
-        articles = articles[ticker]
+        articles_obj = articles_obj[ticker]
 
-        if len(articles) == 0:
+        if len(articles_obj.keys()) == 0:
             raise ValueError(f"No articles were fetched for ticker: {ticker}.")
 
-        print(f"[BUILDER] {ticker} NEWS ARTICLES FOUND: {len(articles)}")
+        total_articles = sum(len(articles) for articles in articles_obj.values())
+
+        print(f"[BUILDER] {ticker} NEWS ARTICLES FOUND: {total_articles}")
 
         # Checkpoint: Articles pulled for given ticker.
 
         pool = ThreadPool(threads)
 
-        for article in articles:
-            pool.apply_async(article.pullArticle, args=())
+        for _, articles in articles_obj.items():
+            for article in articles:
+                pool.apply_async(article.pullArticle, args=())
         pool.close()
         pool.join()
 
         # Filters articles where text could not be retrieved
-        parsedArticles = [
-            article for article in articles if article.articleText is not None
-        ]
 
-        print(f"[BUILDER] {ticker} ARTICLES PARSED: {len(parsedArticles)}")
+        parsedArticles = {
+            date: [article for article in articles if article.articleText]
+            for date, articles in articles_obj.items()
+        }
 
-        stock_df = create_sentiment_column(stock_df, parsedArticles)
+        total_parsedArticles = sum(
+            len(articles) for articles in parsedArticles.values()
+        )
+
+        print(f"[BUILDER] {ticker} ARTICLES PARSED: {total_parsedArticles}")
+
+        stock_df = create_sentiment_column(stock_df, parsedArticles, threads)
 
         print(f"[BUILDER] {ticker} SENTIMENT ANALYZED")
 

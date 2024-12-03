@@ -19,7 +19,7 @@ import json
 #     "AAPL": [Article(title="New iPhone Launch"...)],
 #     "GOOGL": [Article(title="Google AI Innovation"...)]
 # }
-type NewsResponse = Dict[str, List[Article]]
+type NewsResponse = Dict[str, Dict[str, List[Article]]]
 
 
 class Godel:
@@ -228,7 +228,7 @@ class Godel:
             "symbols": tickers,
         }
 
-        news_object = {ticker: [] for ticker in tickers}
+        news_object = {ticker: {} for ticker in tickers}
 
         response = requests.post(
             "https://api.godelterminal.com/api/paged/news",
@@ -250,6 +250,11 @@ class Godel:
                         article["title"],
                         article["description"],
                     )
-                    news_object[security_ticker].append(parsed)
+                    article_dt = datetime.strptime(
+                        parsed.publicationTime, "%Y-%M-%dT%H:%M:%SZ"
+                    ).strftime("%Y-%M-%d")
+                    if article_dt not in news_object[security_ticker]:
+                        news_object[security_ticker][article_dt] = []
+                    news_object[security_ticker][article_dt].append(parsed)
 
         return news_object

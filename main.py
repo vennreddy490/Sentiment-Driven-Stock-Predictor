@@ -12,7 +12,7 @@ aapl_data: pd.DataFrame = pd.DataFrame()
 
 
 if not os.path.exists("data/AAPL.csv"):
-    aapl_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5)
+    aapl_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
     aapl_data.to_csv("data/AAPL.csv")
 else:
     aapl_data = pd.read_csv("data/AAPL.csv")

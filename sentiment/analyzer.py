@@ -1,8 +1,10 @@
 import os
+from typing import Dict, List
 from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
 import pandas as pd
 from godel import Article
+from multiprocessing.pool import ThreadPool
 
 # Ensure the VADER lexicon is downloaded (only needs to be done once)
 # IF YOU'RE DOWNLOADING THIS, MAKE SURE TO RUN IT AT LEAST ONCE!!!!
@@ -35,14 +37,15 @@ def evaluate_sentiment(article_text: str) -> float:
 
 # def create_sentiment_column(stock_df: pd.DataFrame, articles: list[Article]) -> pd.DataFrame:
 def create_sentiment_column(
-    stock_df: pd.DataFrame, articles: list[Article]
+    stock_df: pd.DataFrame, articles: Dict[str, list[Article]], threads: int = 250
 ) -> pd.DataFrame:
     """
     Evaluates the news for a stock ticker for a particular day, averages it, and appends the mean
     sentiment of that news to a new column called "Sentiment" for a stock ticker.
     Args:
-        stock_df: The stock ticker and associated financial calculations, date-indexed.
-        articles: The associated articles for a stock ticker.
+        stock_df (pd.dataFrame): The stock ticker and associated financial calculations, date-indexed.
+        articles (Dict[str, list[Article]]): The associated articles for a stock ticker.
+        threads (int): The number of threads to use to calculate sentiment. Defaults to 250.
     Returns:
         new_df: The resulting df with new "Sentiment" column added.
     """
@@ -68,9 +71,16 @@ def create_sentiment_column(
             # print("\n".join(f"\tArticle: {article['title']}" for article in matching_articles))
 
             sentiments = []
-            for article in matching_articles:
-                sentiment = evaluate_sentiment(article.articleText)
-                sentiments.append(sentiment)
+            pool = ThreadPool(threads)
+
+            sentiments = pool.map(
+                evaluate_sentiment,
+                [article.articleText for article in matching_articles],
+            )
+            # for article in matching_articles:
+            #     pool.apply_async
+            #     sentiment = evaluate_sentiment(article.articleText)
+            #     sentiments.append(sentiment)
 
             # Default case sentiment is 0, otherwise we update the sentiment.
             avg_sentiment = 0.0
