@@ -10,14 +10,17 @@ import numpy as np
 
 aapl_data: pd.DataFrame = pd.DataFrame()
 
+aapl_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
+aapl_data.to_csv("data/AAPL.csv")
 
-if not os.path.exists("data/AAPL.csv"):
-    aapl_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
-    aapl_data.to_csv("data/AAPL.csv")
-else:
-    aapl_data = pd.read_csv("data/AAPL.csv")
-    aapl_data["Date"] = pd.to_datetime(aapl_data["Date"])
-    aapl_data = aapl_data.set_index("Date")
+
+# if not os.path.exists("data/AAPL.csv"):
+#     aapl_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
+#     aapl_data.to_csv("data/AAPL.csv")
+# else:
+#     aapl_data = pd.read_csv("data/AAPL.csv")
+#     aapl_data["Date"] = pd.to_datetime(aapl_data["Date"])
+#     aapl_data = aapl_data.set_index("Date")
 
 encoder = LabelEncoder()
 aapl_data["Signal"] = encoder.fit_transform(aapl_data["Signal"])

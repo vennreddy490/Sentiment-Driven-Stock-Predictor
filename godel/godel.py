@@ -251,7 +251,7 @@ class Godel:
                         article["description"],
                     )
                     article_dt = datetime.strptime(
-                        parsed.publicationTime, "%Y-%m-%dT%H:%m:%SZ"
+                        parsed.publicationTime, "%Y-%m-%dT%H:%M:%SZ"
                     ).strftime("%Y-%m-%d")
                     if article_dt not in news_object[security_ticker]:
                         news_object[security_ticker][article_dt] = []
