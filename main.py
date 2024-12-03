@@ -2,10 +2,11 @@ import os
 import pandas as pd
 from financialcalc.returns import DailyReturn, BuySellHold
 from financialcalc.ratios import DailySharpeRatio
-from godel import Godel
+from godel import Godel, Article, articleSerializer
 from import_stock_data import get_data_yf_symbol, symbol_to_path
 import json
 from sentiment.analyzer import evaluate_sentiment
+
 
 def main():
     # Step 1: Define stock tickers and timeframe
@@ -14,7 +15,7 @@ def main():
     tickers = tickers_df["Symbol"].tolist()
 
     start_date = "2024-01-01"  # Example: January 1, 2024
-    end_date = "2024-11-28"    # Example: November 28, 2024
+    end_date = "2024-11-28"  # Example: November 28, 2024
     threshold = 2.0  # Threshold for Buy/Sell signals (percentage)
 
     # Step 2: Ensure "data" directory exists
@@ -42,20 +43,24 @@ def main():
     print("Fetching news articles...")
     godel = Godel()
     news_articles = godel.queryNews(tickers, "01-01-2024", "11-28-2024")
+
+    # Read Each Article
+    for _, articles in news_articles.items():
+        for article in articles:
+            article.pullArticle()
+
     # news_file_path = os.path.join(<SPECIFIED_DIRECTORY>, "news_articles.json")
     news_file_path = "news_articles.json"
-    with open(news_file_path, "w") as json_file:
-        json.dump(
-            {ticker: [article.__dict__ for article in articles]
-             for ticker, articles in news_articles.items()},
-            json_file,
-            indent=4
-        )
+
+    news_articles = json.dumps(news_articles, indent=4, default=articleSerializer)
+
+    open(news_file_path, "w").write(news_articles)
+
     print(f"Saved news articles at {news_file_path}.")
     print("Data retrieval and storage complete.")
 
     # Step 5: Analyze Sentiment of Given Articles
-    with open('articles/test_aapl_article.txt', 'r', encoding='utf-8') as file:
+    with open("articles/test_aapl_article.txt", "r", encoding="utf-8") as file:
         file_content = file.read().strip()
     test_string = file_content
 
