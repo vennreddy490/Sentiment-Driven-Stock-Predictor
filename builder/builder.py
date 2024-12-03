@@ -1,6 +1,7 @@
 from financialcalc.returns import BuySellHold, DailyReturn
 from financialcalc.ratios import DailySharpeRatio
 from godel.godel import Godel
+from sentiment.analyzer import create_sentiment_column
 from stooq import Stooq
 from datetime import datetime
 import pandas as pd
@@ -44,6 +45,7 @@ class Builder:
         if len(stock_df) == 0:
             raise ValueError(f"No data loaded for ticker: {ticker}.")
 
+        print(f"[BUILDER] {ticker} DATA LOADED")
         # Checkpoint: Valid DataFrame of historical
         #             stock data has been created.
 
@@ -59,6 +61,7 @@ class Builder:
                 f"A financial statistic calculation didn't work for ticker: {ticker}."
             )
 
+        print(f"[BUILDER] {ticker} FINANCIAL STATS CALCULATED")
         # Checkpoint: Financial Statistics Calculated
         #             and added to DataFrame.
 
@@ -71,6 +74,8 @@ class Builder:
         if len(articles) == 0:
             raise ValueError(f"No articles were fetched for ticker: {ticker}.")
 
+        print(f"[BUILDER] {ticker} NEWS ARTICLES FOUND: {len(articles)}")
+
         # Checkpoint: Articles pulled for given ticker.
 
         pool = ThreadPool(threads)
@@ -80,16 +85,19 @@ class Builder:
         pool.close()
         pool.join()
 
-        for article in articles:
-            article.pullArticle()
-
         # Filters articles where text could not be retrieved
         parsedArticles = [
             article for article in articles if article.articleText is not None
         ]
 
-        print(f"Successfully parsed {len(parsedArticles)} articles.")
+        print(f"[BUILDER] {ticker} ARTICLES PARSED: {len(parsedArticles)}")
+
+        stock_df = create_sentiment_column(stock_df, parsedArticles)
+
+        print(f"[BUILDER] {ticker} SENTIMENT ANALYZED")
 
         stock_df = stock_df.dropna(how="any")
+
+        print(f"[BUILDER] {ticker} NA ROWS DROPPED")
 
         return stock_df
