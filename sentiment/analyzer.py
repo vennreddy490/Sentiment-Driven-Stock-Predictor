@@ -55,37 +55,53 @@ def create_sentiment_column(
     stock_df["Sentiment"] = 0.0
 
     for date in stock_df.index:
-        matching_articles = []
-
-        # Loop through all the articles to find those that match the date, & append them.
-        for article in articles:
-            # article_date = pd.to_datetime(article['publicationTime']).date()
-            article_date = pd.to_datetime(article.publicationTime).date()
-            if article_date == date.date():
-                matching_articles.append(article)
-
-        # If there are matching articles, evaluate their sentiment and average them
-        if matching_articles:
-            # Debug Flag: Shows all the matching articles by date.
-            # print(f"Matches found for date {date.date()}:")
-            # print("\n".join(f"\tArticle: {article['title']}" for article in matching_articles))
-
-            sentiments = []
+        formatted_date = date.strftime("%Y-%m-%d")
+        sentiments = []
+        if formatted_date in articles:
             pool = ThreadPool(threads)
 
             sentiments = pool.map(
                 evaluate_sentiment,
-                [article.articleText for article in matching_articles],
+                [article.articleText for article in articles[formatted_date]]
             )
-            # for article in matching_articles:
-            #     pool.apply_async
-            #     sentiment = evaluate_sentiment(article.articleText)
-            #     sentiments.append(sentiment)
-
-            # Default case sentiment is 0, otherwise we update the sentiment.
             avg_sentiment = 0.0
             if sentiments:
                 avg_sentiment = sum(sentiments) / len(sentiments)
             stock_df.at[date, "Sentiment"] = avg_sentiment
+
+
+    # for date in stock_df.index:
+    #     matching_articles = []
+    #
+    #     # Loop through all the articles to find those that match the date, & append them.
+    #     for article in articles:
+    #         # article_date = pd.to_datetime(article['publicationTime']).date()
+    #         article_date = pd.to_datetime(article.publicationTime).date()
+    #         if article_date == date.date():
+    #             matching_articles.append(article)
+    #
+    #     # If there are matching articles, evaluate their sentiment and average them
+    #     if matching_articles:
+    #         # Debug Flag: Shows all the matching articles by date.
+    #         # print(f"Matches found for date {date.date()}:")
+    #         # print("\n".join(f"\tArticle: {article['title']}" for article in matching_articles))
+    #
+    #         sentiments = []
+    #         pool = ThreadPool(threads)
+    #
+    #         sentiments = pool.map(
+    #             evaluate_sentiment,
+    #             [article.articleText for article in matching_articles],
+    #         )
+    #         # for article in matching_articles:
+    #         #     pool.apply_async
+    #         #     sentiment = evaluate_sentiment(article.articleText)
+    #         #     sentiments.append(sentiment)
+    #
+    #         # Default case sentiment is 0, otherwise we update the sentiment.
+    #         avg_sentiment = 0.0
+    #         if sentiments:
+    #             avg_sentiment = sum(sentiments) / len(sentiments)
+    #         stock_df.at[date, "Sentiment"] = avg_sentiment
 
     return stock_df
