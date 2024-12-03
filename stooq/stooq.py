@@ -121,4 +121,7 @@ class Stooq:
 
         df.index = pd.to_datetime(df.index, format="%Y-%m-%d")
 
+        if len(df) == 0 and ".US" not in ticker.upper():
+            return Stooq.download(f"{ticker}.US", startDate, endDate)
+
         return df
