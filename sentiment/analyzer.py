@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List
+from typing import Dict, List, cast
 from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
 import pandas as pd
@@ -62,13 +62,15 @@ def create_sentiment_column(
 
             sentiments = pool.map(
                 evaluate_sentiment,
-                [article.articleText for article in articles[formatted_date]]
+                [
+                    cast(str, article.articleText)
+                    for article in articles[formatted_date]
+                ],
             )
             avg_sentiment = 0.0
             if sentiments:
                 avg_sentiment = sum(sentiments) / len(sentiments)
             stock_df.at[date, "Sentiment"] = avg_sentiment
-
 
     # for date in stock_df.index:
     #     matching_articles = []
