@@ -10,8 +10,10 @@ import numpy as np
 
 stock_data: pd.DataFrame = pd.DataFrame()
 
-stock_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
-stock_data.to_csv("data/AAPL.csv")
+TICKER = "AAPL"
+
+stock_data = Builder.build(TICKER, "01-01-2024", "12-01-2024", 0.5, 500)
+stock_data.to_csv(f"data/{TICKER}.csv")
 
 
 # if not os.path.exists("data/AAPL.csv"):
