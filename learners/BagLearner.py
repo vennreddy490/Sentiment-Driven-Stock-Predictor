@@ -114,7 +114,7 @@ class BagLearner:
 
         return (
             accuracy_score(y_true, y_pred),
-            precision_score(y_true, y_pred, average="weighted"),
+            precision_score(y_true, y_pred, average="weighted", zero_division=0.0),
             f1_score(y_true, y_pred, average="weighted"),
             recall_score(y_true, y_pred, average="weighted"),
             confusion_matrix(y_true, y_pred),
