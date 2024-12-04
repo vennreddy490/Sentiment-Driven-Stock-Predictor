@@ -8,10 +8,10 @@ import pandas as pd
 from typing import cast
 import numpy as np
 
-aapl_data: pd.DataFrame = pd.DataFrame()
+stock_data: pd.DataFrame = pd.DataFrame()
 
-aapl_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
-aapl_data.to_csv("data/AAPL.csv")
+stock_data = Builder.build("AAPL", "01-01-2024", "12-01-2024", 0.5, 500)
+stock_data.to_csv("data/AAPL.csv")
 
 
 # if not os.path.exists("data/AAPL.csv"):
@@ -23,7 +23,7 @@ aapl_data.to_csv("data/AAPL.csv")
 #     aapl_data = aapl_data.set_index("Date")
 
 encoder = LabelEncoder()
-aapl_data["Signal"] = encoder.fit_transform(aapl_data["Signal"])
+stock_data["Signal"] = encoder.fit_transform(stock_data["Signal"])
 
 label_mapping = {
     label: index for index, label in enumerate(cast(np.ndarray, encoder.classes_))
@@ -32,7 +32,7 @@ label_mapping = {
 
 print(f"Label Encoder Classes: {label_mapping}")
 
-train_x, train_y, test_x, test_y = split_time_series(aapl_data)
+train_x, train_y, test_x, test_y = split_time_series(stock_data)
 
 print(f"Train Set Length: {len(train_x)}")
 print(f"Test Set Length: {len(test_x)}")
