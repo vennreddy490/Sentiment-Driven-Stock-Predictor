@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from pandas.core.algorithms import nunique_ints
 
+np.seterr(divide="ignore", invalid="ignore")
+
 
 class DTLearner:
     def __init__(self, leaf_size=1, verbose=False, classifier=False):
