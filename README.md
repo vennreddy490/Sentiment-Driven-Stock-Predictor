@@ -2,6 +2,8 @@
 
 ### Final Project for CSCI4170 @ UGA, Fall 2024
 
+### [Report PDF](https://github.com/vennreddy490/Sentiment-Driven-Stock-Predictor/blob/main/Reddy%2C%20Sulimani%20-%20Sentiment-Driven%20Stock%20Predictor%20Report.pdf)
+
 By [Venn Reddy](mailto:vennreddy@uga.edu) & [Stephen Sulimani](mailto:stephensulimani@uga.edu)
 
 ### Usage:
