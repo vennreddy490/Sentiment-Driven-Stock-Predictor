@@ -140,6 +140,8 @@ def train_model():
         print("[bold red]A dataset must be loaded to train a model.[/bold red]")
         return
 
+    dataset = DATASET.copy()
+
     print("[bold bright_yellow]Please select from the menu below:[/bold bright_yellow]")
     print()
     print("[italic yellow]1 - Decision Tree Learners[/italic yellow]")
@@ -158,7 +160,7 @@ def train_model():
     print("[bold bright_yellow]Now training...[/bold bright_yellow]")
 
     encoder = LabelEncoder()
-    DATASET["Signal"] = encoder.fit_transform(DATASET["Signal"])
+    dataset["Signal"] = encoder.fit_transform(dataset["Signal"])
 
     label_mapping = {
         label: index for index, label in enumerate(cast(np.ndarray, encoder.classes_))
@@ -166,7 +168,7 @@ def train_model():
 
     print(f"[italic yellow]Label Encoder Classes: {label_mapping}[/italic yellow]")
 
-    train_x, train_y, test_x, test_y = split_time_series(DATASET)
+    train_x, train_y, test_x, test_y = split_time_series(dataset)
 
     print(f"[italic yellow]Train Set Length: {len(train_x)}[/italic yellow]")
     print(f"[italic yellow]Test Set Length: {len(test_x)}[/italic yellow]")
@@ -236,6 +238,7 @@ while True:
     print("[italic yellow]1 - Create a Dataset[/italic yellow]")
     print("[italic yellow]2 - Load a Dataset[/italic yellow]")
     print("[italic yellow]3 - Train and Test a Model[/italic yellow]")
+    print("[italic red]q - Quit[/italic red]")
 
     selection = 0
 
